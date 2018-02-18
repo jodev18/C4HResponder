@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">C4H Responder</string>
+    <string name="title_activity_respond_location">Responding Location</string>
+</resources>
