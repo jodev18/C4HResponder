@@ -4,13 +4,13 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-public class UartInterfaceActivity extends AppCompatActivity implements BleManager.BleManagerListener {
+public class UartInterfaceActivity extends FragmentActivity implements BleManager.BleManagerListener {
     // Log
     private final static String TAG = UartInterfaceActivity.class.getSimpleName();
 

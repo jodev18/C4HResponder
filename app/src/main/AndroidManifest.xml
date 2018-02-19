@@ -46,6 +46,9 @@
             android:name=".bluetooth.BluetoothLeService"
             android:enabled="true" />
 
+        <!-- Mqtt Service -->
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
+
     </application>
 
 </manifest>

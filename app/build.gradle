@@ -37,4 +37,6 @@ dependencies {
     compile(group: 'org.eclipse.paho', name: 'org.eclipse.paho.android.service', version: '1.0.2') {
         exclude module: 'support-v4'
     }
+
+    compile 'no.nordicsemi.android:dfu:1.0.4'
 }
