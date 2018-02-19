@@ -1,10 +1,12 @@
 package dev.jojo.c4hresponder;
 
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -67,8 +69,9 @@ public class RespondLocation extends BlunoLibrary {
 
         serialBegin(115200);
 
+        enableBluetooth();
 
-
+        buttonScanOnClickProcess();
 
         h.postDelayed(new Runnable() {
             @Override
@@ -79,6 +82,15 @@ public class RespondLocation extends BlunoLibrary {
             }
         },5000);
 
+    }
+
+    private void enableBluetooth(){
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        boolean isEnabled = bluetoothAdapter.isEnabled();
+
+        if(!isEnabled){
+            bluetoothAdapter.enable();
+        }
     }
 
 
@@ -108,7 +120,7 @@ public class RespondLocation extends BlunoLibrary {
 
     @Override
     public void onSerialReceived(String theString) {
-
+        Log.d("BLUETOOTH_RECEIVED",theString);
     }
 
 

@@ -41,6 +41,11 @@
         <activity
             android:name=".RespondLocation"
             android:label="@string/title_activity_respond_location"></activity>
+
+        <service
+            android:name=".bluetooth.BluetoothLeService"
+            android:enabled="true" />
+
     </application>
 
 </manifest>
