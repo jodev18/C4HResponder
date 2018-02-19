@@ -1,6 +1,7 @@
 package dev.jojo.c4hresponder;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ public class RespondLocation extends BlunoLibrary {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_monitor);
+        setContentView(R.layout.activity_respond_location);
 
         h = new Handler(this.getMainLooper());
 
@@ -61,7 +62,14 @@ public class RespondLocation extends BlunoLibrary {
      * Wait for bluetooth data
      */
     private void waitForResponse(){
-        
+
+        onCreateProcess();														//onCreate Process by BlunoLibrary
+
+        serialBegin(115200);
+
+
+
+
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -91,5 +99,47 @@ public class RespondLocation extends BlunoLibrary {
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    @Override
+    public void onConectionStateChange(connectionStateEnum theconnectionStateEnum) {
+
+    }
+
+    @Override
+    public void onSerialReceived(String theString) {
+
+    }
+
+
+    protected void onResume(){
+        super.onResume();
+        System.out.println("BlUNOActivity onResume");
+        onResumeProcess();														//onResume Process by BlunoLibrary
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        onActivityResultProcess(requestCode, resultCode, data);					//onActivityResult Process by BlunoLibrary
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        onPauseProcess();														//onPause Process by BlunoLibrary
+    }
+
+    protected void onStop() {
+        super.onStop();
+        onStopProcess();														//onStop Process by BlunoLibrary
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        onDestroyProcess();														//onDestroy Process by BlunoLibrary
     }
 }
