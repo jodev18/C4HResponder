@@ -8,12 +8,13 @@
 
     <TextView
         android:id="@+id/tv_dialog_title"
+        fontPath="fonts/helvetica.otf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:fontFamily="serif"
-        android:text="Waiting for call..."
+        android:text="Waiting"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="36sp"
@@ -21,14 +22,34 @@
 
     <TextView
         android:id="@+id/tvWaitMessage"
+        fontPath="fonts/helvetica.otf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_dialog_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:fontFamily="serif"
-        android:text="Waiting for call. Will display on map once coordinates are received."
+        android:text="Waiting for connection from device"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="24sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvWaitMessage">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

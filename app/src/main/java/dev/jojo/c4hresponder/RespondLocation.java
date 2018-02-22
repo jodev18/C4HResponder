@@ -85,6 +85,15 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
 
     private TextView tvWaitStat;
 
+    private boolean hasReceivedDistress = false;
+
+    private Runnable detectionTimeClear = new Runnable() {
+        @Override
+        public void run() {
+            hasReceivedDistress = false;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +142,7 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
 
         ab.setView(v);
 
+        ab.setCancelable(false);
         ad = ab.create();
 
         ad.show();
@@ -357,11 +367,21 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
     private void handleCall(String data){
 
         String[] response = data.split(";");
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
 
-        if(response.length == 1){
-            if(response[0].equals("W")){
+        if(data.length() > 1){
+
+            if(data.contains("E")){
+                String emType = data.split(":")[1];
+
+                Toast.makeText(this, emType, Toast.LENGTH_SHORT).show();
+            }
+            else if(data.contains("W")){
 
             }
+        }
+        else{
+
         }
     }
 
