@@ -6,9 +6,13 @@ import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -95,6 +99,8 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
     };
 
 
+    MediaPlayer mp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +108,7 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
 
         h = new Handler(this.getMainLooper());
         mBleManager = BleManager.getInstance(this);
+        mp = MediaPlayer.create(this, R.raw.siren);
 
         boolean connect = mBleManager.connect(getApplicationContext(),"FC:DC:B9:AA:CA:3B");
         restoreRetainedDataFragment();
@@ -118,7 +125,7 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
                 mMqttManager.connectFromSavedSettings(this);
             }
             else{
-                Toast.makeText(this, "MQTT not initialized", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "MQTT not initialized", Toast.LENGTH_SHORT).show();
             }
             loadMap();
             displayWaitDialog();
@@ -194,11 +201,12 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        // Add a marker in Sydney and move the camera
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     protected void onResume(){
@@ -276,8 +284,6 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
 
                 final UartDataChunk dataChunk = new UartDataChunk(System.currentTimeMillis(), UartDataChunk.TRANSFERMODE_RX, bytes);
                 mDataBuffer.add(dataChunk);
-
-
 
                 runOnUiThread(new Runnable() {
 
@@ -366,22 +372,96 @@ public class RespondLocation extends UartInterfaceActivity implements BleManager
 
     private void handleCall(String data){
 
+        Toast.makeText(getApplicationContext(),data,Toast.LENGTH_LONG).show();
+
         String[] response = data.split(";");
-        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
 
         if(data.length() > 1){
 
+            String distressType = "";
+
             if(data.contains("E")){
+
+                if(mp.isPlaying()){
+                    mp.stop();
+                    mp.release();
+                    mp = MediaPlayer.create(RespondLocation.this, R.raw.siren);
+                }
+
                 String emType = data.split(":")[1];
 
-                Toast.makeText(this, emType, Toast.LENGTH_SHORT).show();
+                if(emType.contains("C")){
+                    tvWaitStat.setText("Received a crime distress call. " +
+                            "Respond to area within 1 km immediately.");
+
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(500);
+
+                    mp.start();
+
+                    emType = "Crime";
+                }
+                else if(data.contains("D")){
+                    tvWaitStat.setText("Received a generic distress call. " +
+                            "Respond to area within 1 km immediately.");
+
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(500);
+
+                    mp.start();
+
+                    emType = "Disaster";
+                }
+                else if(data.contains("N")){
+                    tvWaitStat.setText("Received a natural distress call. " +
+                            "Respond to area within 1 km immediately.");
+
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(500);
+
+                    mp.start();
+
+                    emType = "Natural";
+                }
+                else{
+                    tvWaitStat.setText("Received a generic distress call. " +
+                            "Respond to area within 1 km immediately.");
+                    Toast.makeText(this, "Distress call received!", Toast.LENGTH_SHORT).show();
+
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(2000);
+
+                    mp.start();
+
+                    emType = "Generic";
+                }
+
+
+                ad.setCancelable(true);
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ad.dismiss();
+                    }
+                },10000);
+
+                LatLng sydney = new LatLng(14.73458538763225, 121.07056095264852);
+                mMap.addMarker(new MarkerOptions().position(sydney).title(emType + " type distress call. Please respond.s"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(sydney.latitude, sydney.longitude), 22.0f));
+
+//                Toast.makeText(this, emType, Toast.LENGTH_SHORT).show();
+
+                Snackbar.make(tvWaitStat,"Emergency call received.",Snackbar.LENGTH_LONG).show();
             }
             else if(data.contains("W")){
-
+                tvWaitStat.setText("Connected to the device and ready to receive distress call.");
             }
-        }
-        else{
-
         }
     }
 
